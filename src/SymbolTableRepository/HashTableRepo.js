@@ -1,9 +1,14 @@
 class HashTableRepo {
     constructor() {
-        console.log('')
         this.table = new Array(512);
         this.size = 0;
     }
+
+    /**
+     * hash - simple hash function
+     * @param {string | number} key - key for which to generate the hash
+     * @returns {number} position of the key in the hash table
+     */
     hash = (key) => {
         let hash = 0;
         for (let i = 0; i < key.length; i++) {
@@ -12,33 +17,43 @@ class HashTableRepo {
         return hash % this.table.length;
     }
 
+    /**
+     * set - sets a new entry in the hash table, only if it not already exists.
+     * uses the hash function to generate the index.
+     * @param {string | number} key - key for the given value
+     * @param {string | number} value - value to be stored
+     */
     set = (key, value) => {
-        const index = this.hash(key);
-        this.table[index] = [key, value];
-        this.size++;
+        if (!this.contains(key)){
+            const index = this.hash(key);
+            this.table[index] = value;
+            this.size++;
+        }
+
     }
 
+    /**
+     * get - returns the value by key
+     * @param {string | number} key - key to check for
+     * @returns {string | number} - the value for the given key
+     */
     get = (key) => {
         const index = this.hash(key);
         return this.table[index];
     }
-
-    remove(key) {
-        const index = this.hash(key);
-        if (this.table[index] && this.table[index].length) {
-            this.table[index] = [];
-            this.size--;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
+    /**
+     * contains - checks if a given key exists in the hash table
+     * @param {string | number} key - key to check for
+     * @returns {boolean} - true if exists, false otherwise
+     */
     contains = (key) => {
         const index = this.hash(key);
         return !!this.table[index];
     }
-
+    /**
+     * getSize - returns the number of entries in the table
+     * @returns {number} - number of entries in the hash table
+     */
     getSize = () => {
         return this.size;
     }
