@@ -1,0 +1,6 @@
+function p2GCD (a, b) {
+    if (b === 0) {
+        return a;
+    }
+    return p2GCD(b, a % b);
+};

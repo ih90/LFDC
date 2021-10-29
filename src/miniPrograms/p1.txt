@@ -1,0 +1,7 @@
+function p1MinMax(a, b) { if (a < b){
+    console.log(`Min: ${a}`);
+    console.log(`Max: ${b}`); }
+else {
+    console.log(`Min: ${b}`);
+    console.log(`Max: ${a}`); }
+}
