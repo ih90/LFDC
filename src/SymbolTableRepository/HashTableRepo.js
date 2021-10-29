@@ -1,7 +1,11 @@
+import { typesToExclude } from "../scanner/utils/classification.js";
+
 class HashTableRepo {
     constructor() {
-        this.table = new Array(512);
-        this.size = 0;
+        this.identifierSymbolTable = new Array(512);
+        this.constantsSymbolTable = new Array(512);
+        this.identifierTableSize = 0;
+        this.constantTableSize = 0;
     }
 
     /**
@@ -14,7 +18,7 @@ class HashTableRepo {
         for (let i = 0; i < key.length; i++) {
             hash += key.charCodeAt(i);
         }
-        return hash % this.table.length;
+        return hash % this.identifierSymbolTable.length;
     }
 
     /**
@@ -23,39 +27,56 @@ class HashTableRepo {
      * @param {string | number} key - key for the given value
      * @param {string | number} value - value to be stored
      */
-    set = (key, value) => {
-        if (!this.contains(key)){
-            const index = this.hash(key);
-            this.table[index] = value;
-            this.size++;
-        }
 
+    keyExists = (key) => {
+        return !!(this.identifierSymbolTable.findIndex(index => index !== -1) && this.constantsSymbolTable.findIndex(index => index !== -1));
     }
 
+    set = (key, type) => {
+        const index = this.hash(key);
+            if (!this.keyExists(index) && !typesToExclude.includes(type)) {
+                if (type === 'constant') {
+                    this.constantsSymbolTable[index] = key;
+                    this.constantTableSize++;
+                }
+                if (type === 'identifier') {
+                    if (this.getConstant(key)){
+                        this.identifierSymbolTable[index] = key;
+                        this.identifierTableSize++;
+                    } else {
+                        throw new Error(`invalid key ${key}`);
+                    }
+                }
+            }
+    }
+
+
+    isAvailable = (key) => {
+        const index = this.hash(key);
+        return !!(this.identifierSymbolTable[index] || this.constantsSymbolTable[index]);
+
+    }
     /**
      * get - returns the value by key
      * @param {string | number} key - key to check for
      * @returns {string | number} - the value for the given key
      */
-    get = (key) => {
+    getConstant = (key) => {
         const index = this.hash(key);
-        return this.table[index];
+        const data = this.constantsSymbolTable[index];
+        return data;
     }
-    /**
-     * contains - checks if a given key exists in the hash table
-     * @param {string | number} key - key to check for
-     * @returns {boolean} - true if exists, false otherwise
-     */
-    contains = (key) => {
-        const index = this.hash(key);
-        return !!this.table[index];
-    }
-    /**
-     * getSize - returns the number of entries in the table
-     * @returns {number} - number of entries in the hash table
-     */
-    getSize = () => {
-        return this.size;
+
+    toString = () => {
+        let identifies = `identifies: `
+        this.identifierSymbolTable.forEach(entry => {
+            identifies += `${entry}=${this.hash(entry)} `;
+        })
+        let constants = `constants: `
+        this.constantsSymbolTable.forEach(entry => {
+            constants += `${entry}=${this.hash(entry)} `;
+        })
+        return `${identifies} \n ${constants}`
     }
 }
 

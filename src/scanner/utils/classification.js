@@ -1,4 +1,4 @@
-import { arithmeticOperators, reservedWords, constants, relationshipOperators, identifierRegex } from "../tokens.js";
+import { arithmeticOperators, reservedWords, relationshipOperators, identifierRegex } from "../tokens.js";
 
 export const isReservedWord = (string) => {
     return reservedWords.includes(string);
@@ -12,21 +12,7 @@ export const isRelationshipOperator = (string) => {
     return relationshipOperators.includes(string);
 }
 
-export const anyReservedWord = (string) => {
-    return isReservedWord(string) || isArithmeticOperator(string) || isRelationshipOperator(string);
-}
-
-// export const isConstant = (items, string) => {
-//     const regex = new RegExp(identifierRegex);
-//     if (regex.test(string)) {
-//         if (items[items -1] === 'let' || items[items -1] === 'function'){
-//             console.log(`${entry} -> constant`);
-//             return
-//         }
-//         console.log(`${entry} -> identifier`);
-//         return
-//     }
-// }
+export const typesToExclude = ['arithmeticOperators', 'reservedWords', 'relationshipOperators'];
 
 export const classification = (token, line) => {
         if (isArithmeticOperator(token)){
@@ -36,7 +22,7 @@ export const classification = (token, line) => {
             return 'reservedWords';
         }
         if (isRelationshipOperator(token)){
-            return relationshipOperators;
+            return 'relationshipOperators';
         }
         const regex = new RegExp(identifierRegex);
         if (regex.test(token)) {
@@ -46,6 +32,5 @@ export const classification = (token, line) => {
             }
             return 'identifier';
         }
-
         return 'unknown'
 }

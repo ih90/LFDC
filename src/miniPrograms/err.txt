@@ -1,7 +1,7 @@
-function p4Err(intArray) {
+function p4Err(let intArray) {
     let sum = @0;
     for(let i = 0; i < intArray.length; i++){
-        sum+= intArray[i];
+        sum = sum + intArray[i];
     }
     rn sum;
 }
